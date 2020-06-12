@@ -1,11 +1,11 @@
 /*
- * Copyright 2019 Google, Inc.
+ * Copyright 2020 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,62 +17,63 @@
 package com.example.jetnews.ui.home
 
 import androidx.compose.Composable
-import androidx.compose.ambient
-import androidx.compose.unaryPlus
-import androidx.ui.core.Clip
+import androidx.ui.core.ContentScale
 import androidx.ui.core.ContextAmbient
-import androidx.ui.core.Text
-import androidx.ui.core.dp
-import androidx.ui.foundation.DrawImage
-import androidx.ui.foundation.shape.corner.RoundedCornerShape
+import androidx.ui.core.Modifier
+import androidx.ui.core.clip
+import androidx.ui.foundation.Image
+import androidx.ui.foundation.Text
 import androidx.ui.layout.Column
-import androidx.ui.layout.Container
-import androidx.ui.layout.HeightSpacer
-import androidx.ui.layout.LayoutSize
-import androidx.ui.layout.Padding
-import androidx.ui.material.MaterialColors
+import androidx.ui.layout.Spacer
+import androidx.ui.layout.fillMaxWidth
+import androidx.ui.layout.padding
+import androidx.ui.layout.preferredHeight
+import androidx.ui.layout.preferredHeightIn
+import androidx.ui.material.EmphasisAmbient
 import androidx.ui.material.MaterialTheme
-import androidx.ui.material.MaterialTypography
-import androidx.ui.material.surface.Surface
-import androidx.ui.material.themeTextStyle
-import androidx.ui.material.withOpacity
+import androidx.ui.material.ProvideEmphasis
 import androidx.ui.tooling.preview.Preview
-import com.example.jetnews.data.getPostsWithImagesLoaded
-import com.example.jetnews.data.posts
+import androidx.ui.unit.dp
+import com.example.jetnews.data.posts.impl.getPostsWithImagesLoaded
+import com.example.jetnews.data.posts.impl.post2
+import com.example.jetnews.data.posts.impl.posts
 import com.example.jetnews.model.Post
-import com.example.jetnews.ui.darkThemeColors
-import com.example.jetnews.ui.lightThemeColors
-import com.example.jetnews.ui.themeTypography
+import com.example.jetnews.ui.ThemedPreview
 
 @Composable
-fun PostCardTop(post: Post) {
+fun PostCardTop(post: Post, modifier: Modifier = Modifier) {
     // TUTORIAL CONTENT STARTS HERE
-    Padding(16.dp) {
-        Column(crossAxisSize = LayoutSize.Expand) {
-            post.image?.let { image ->
-                Container(expanded = true, height = 180.dp) {
-                    Clip(shape = RoundedCornerShape(4.dp)) {
-                        DrawImage(image)
-                    }
-                }
-            }
-            HeightSpacer(16.dp)
+    val typography = MaterialTheme.typography
+    Column(modifier = modifier.fillMaxWidth().padding(16.dp)) {
+        post.image?.let { image ->
+            val imageModifier = Modifier
+                .preferredHeightIn(minHeight = 180.dp)
+                .fillMaxWidth()
+                .clip(shape = MaterialTheme.shapes.medium)
+            Image(image, modifier = imageModifier, contentScale = ContentScale.Crop)
+        }
+        Spacer(Modifier.preferredHeight(16.dp))
+
+        val emphasisLevels = EmphasisAmbient.current
+        ProvideEmphasis(emphasisLevels.high) {
             Text(
                 text = post.title,
-                style = (+themeTextStyle { h6 }).withOpacity(0.87f)
+                style = typography.h6
             )
             Text(
                 text = post.metadata.author.name,
-                style = (+themeTextStyle { body2 }).withOpacity(0.87f)
+                style = typography.body2
             )
+        }
+        ProvideEmphasis(emphasisLevels.medium) {
             Text(
                 text = "${post.metadata.date} - ${post.metadata.readTimeMinutes} min read",
-                style = (+themeTextStyle { body2 }).withOpacity(0.6f)
+                style = typography.body2
             )
         }
     }
-    // TUTORIAL CONTENT ENDS HERE
 }
+// TUTORIAL CONTENT ENDS HERE
 
 // Preview section
 
@@ -82,10 +83,10 @@ fun TutorialPreview() {
     TutorialPreviewTemplate()
 }
 
-@Preview("Dark colors")
+@Preview("Dark theme")
 @Composable
 fun TutorialPreviewDark() {
-    TutorialPreviewTemplate(colors = darkThemeColors)
+    TutorialPreviewTemplate(darkTheme = true)
 }
 
 @Preview("Font scaling 1.5", fontScale = 1.5f)
@@ -96,15 +97,29 @@ fun TutorialPreviewFontscale() {
 
 @Composable
 fun TutorialPreviewTemplate(
-    colors: MaterialColors = lightThemeColors,
-    typography: MaterialTypography = themeTypography
+    darkTheme: Boolean = false
 ) {
-    val context = +ambient(ContextAmbient)
+    val context = ContextAmbient.current
     val previewPosts = getPostsWithImagesLoaded(posts.subList(1, 2), context.resources)
     val post = previewPosts[0]
-    MaterialTheme(colors = colors, typography = typography) {
-        Surface {
-            PostCardTop(post)
-        }
+
+    ThemedPreview(darkTheme) {
+        PostCardTop(post)
+    }
+}
+
+@Preview("Post card top")
+@Composable
+fun PreviewPostCardTop() {
+    ThemedPreview {
+        PostCardTop(post = post2)
+    }
+}
+
+@Preview("Post card top dark theme")
+@Composable
+fun PreviewPostCardTopDark() {
+    ThemedPreview(darkTheme = true) {
+        PostCardTop(post = post2)
     }
 }

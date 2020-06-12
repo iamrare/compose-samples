@@ -1,11 +1,11 @@
 /*
- * Copyright 2019 Google, Inc.
+ * Copyright 2020 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,29 +14,36 @@
  * limitations under the License.
  */
 
-package com.example.jetnews.ui
+package com.example.jetnews.ui.theme
 
-import androidx.ui.core.sp
-import androidx.ui.material.MaterialTypography
+import androidx.ui.material.Typography
 import androidx.ui.text.TextStyle
-import androidx.ui.text.font.Font
-import androidx.ui.text.font.FontFamily
 import androidx.ui.text.font.FontWeight
+import androidx.ui.text.font.font
+import androidx.ui.text.font.fontFamily
+import androidx.ui.unit.sp
+import com.example.jetnews.R
 
-val regular = Font("montserrat_regular.ttf")
-val medium = Font("montserrat_medium.ttf", FontWeight.W500)
-val semibold = Font("montserrat_semibold.ttf", FontWeight.W600)
+private val regular = font(R.font.montserrat_regular)
+private val medium = font(R.font.montserrat_medium, FontWeight.W500)
+private val semibold = font(R.font.montserrat_semibold, FontWeight.W600)
 
-val appFontFamily = FontFamily(fonts = listOf(regular, medium, semibold))
-
-val bodyFontFamily = FontFamily(
+private val appFontFamily = fontFamily(
     fonts = listOf(
-        Font("domine_regular.ttf"),
-        Font("domine_bold", FontWeight.Bold)
+        regular,
+        medium,
+        semibold
     )
 )
 
-val themeTypography = MaterialTypography(
+private val bodyFontFamily = fontFamily(
+    fonts = listOf(
+        font(R.font.domine_regular),
+        font(R.font.domine_bold, FontWeight.Bold)
+    )
+)
+
+val themeTypography = Typography(
     h4 = TextStyle(
         fontFamily = appFontFamily,
         fontWeight = FontWeight.W600,
